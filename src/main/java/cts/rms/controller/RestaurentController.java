@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cts.rms.dto.Restaurent;
 import cts.rms.service.RestaurentService;
+import jakarta.validation.Valid;
 
 @RestController   //@Contoller + @ResponseBody
 public class RestaurentController {
@@ -22,7 +23,9 @@ public class RestaurentController {
 	RestaurentService restaurentService;
 	
 	@PostMapping("/restaurent-api/restaurent")//Request Packet - header / body
-	public ResponseEntity<Restaurent> createRestaurent(@RequestBody Restaurent restaurent) {
+	public ResponseEntity<Restaurent> createRestaurent(@Valid @RequestBody Restaurent restaurent) {
+			
+		// MethodArgumentInvalidExcption
 		System.out.println("create method called");
 		System.out.println(restaurent);
 		Restaurent restaurent2=restaurentService.createRestaurent(restaurent);
@@ -34,12 +37,8 @@ public class RestaurentController {
 	public ResponseEntity<Restaurent> getRestaurentById(@PathVariable("id") int restaurentId) {
 		System.out.println("get restaurent by id is called"+restaurentId);
 		Restaurent restaurent =restaurentService.getRestaurentById(restaurentId);
-		ResponseEntity<Restaurent> response;
-		if(restaurent==null) {
-			response=new ResponseEntity<Restaurent>(restaurent, HttpStatus.NOT_FOUND);
-			return response;
-		}
-		response=new ResponseEntity<Restaurent>(restaurent, HttpStatus.FOUND);
+		//RestaurentIdNotFoundException - should be handle the exception
+		ResponseEntity<Restaurent> response=new ResponseEntity<Restaurent>(restaurent, HttpStatus.FOUND);
 		return response;
 		
 	}
@@ -64,8 +63,9 @@ public class RestaurentController {
 	}
 	@PutMapping("/restaurent-api/restaurent")
 	public ResponseEntity<Restaurent> updateRestaurent(@RequestBody Restaurent restaurent) {
+		Restaurent rest = restaurentService.updateRestaurent(restaurent);
 		ResponseEntity<Restaurent> response=
-				new ResponseEntity<Restaurent>(restaurent, HttpStatus.GONE);
+				new ResponseEntity<Restaurent>(rest, HttpStatus.GONE);
 		return response;
 		
 	}

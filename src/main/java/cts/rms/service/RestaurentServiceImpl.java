@@ -8,25 +8,28 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 
 import cts.rms.dto.Restaurent;
+import cts.rms.exception.RestaurentIdNotFoundException;
+import cts.rms.exception.RestaurentNameNotExistsException;
+import cts.rms.exception.RestaurentNotUpdatedException;
 import cts.rms.repository.RestaurentRespoitory;
 @Service
-public class RestaurentServiceImpl implements RestaurentService{
+public class RestaurentServiceImpl implements RestaurentService{  // SUT or CUT
 	
 	@Autowired
 	RestaurentRespoitory restaurentRespoitory;
 	
-	public Restaurent createRestaurent(Restaurent restaurent) {
+	public Restaurent createRestaurent(Restaurent restaurent) { // MUT
 		Restaurent restaurent2= restaurentRespoitory.save(restaurent);
 		return restaurent2;
 	}
 	
-	public Restaurent getRestaurentById(int restaurentId) {
+	public Restaurent getRestaurentById(int restaurentId) { // MUT
 		Optional<Restaurent> res=restaurentRespoitory.findById(restaurentId);
-		if(res.isPresent()) {
-			return res.get();
-		}
-		return null;
+		if(res.isEmpty()) {
+			throw new RestaurentIdNotFoundException("restaurent ID:"+restaurentId+" is not found in the db");
 		
+		}
+		return res.get();
 	}
 	
 	public List<Restaurent> getAllRestaurent(){
@@ -37,11 +40,11 @@ public class RestaurentServiceImpl implements RestaurentService{
 	
 	public Restaurent updateRestaurent(Restaurent restaurent) {
 		boolean status = restaurentRespoitory.existsById(restaurent.getId());
-		if(status==true) {
-			Restaurent rest = restaurentRespoitory.save(restaurent);
-			return rest;
+		if(status==false) {
+			throw new RestaurentNotUpdatedException("Restaurent with id you want to update is not there in the db !!! so updated is failed");
 		}
-		return null;
+		return restaurentRespoitory.save(restaurent);
+		
 		
 	}
 	
@@ -56,8 +59,11 @@ public class RestaurentServiceImpl implements RestaurentService{
 
 	@Override
 	public Restaurent findRestaurentByName(String name) {
-		
-		return restaurentRespoitory.findName(name);
+		 Restaurent restaurent = restaurentRespoitory.findName(name);
+		 if(restaurent==null) {
+			 throw new RestaurentNameNotExistsException("Restaurent name: "+name+" is not exists in the db !!! Check the restaurent name") ;
+		 }
+		return restaurent;
 	}
 
 	@Override

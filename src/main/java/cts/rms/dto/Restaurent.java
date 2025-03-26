@@ -2,52 +2,30 @@ package cts.rms.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class Restaurent {
 	@Id
+	@Min(value = 0,message="Id should not be negative")
 	private int id;
+	@NotBlank(message = "name should not be empty")
 	private String name;
+	@NotBlank(message = "name should not be empty")
 	private String location;
+	@NotBlank(message = "name should not be empty")
+	@Size(min = 2,max = 8,message = "restaurent type should  have min 2character max 8 characters")
 	private String type;	
-	public Restaurent() {
-		// TODO Auto-generated constructor stub
-	}
-	public Restaurent(int id, String name, String location, String type) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.location = location;
-		this.type = type;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getLocation() {
-		return location;
-	}
-	public void setLocation(String location) {
-		this.location = location;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	@Override
-	public String toString() {
-		return "Restaurent [id=" + id + ", name=" + name + ", location=" + location + ", type=" + type + "]";
-	}
-	
+
 
 }
